@@ -14,7 +14,9 @@ import {
   UtensilsCrossed,
   X,
 } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
 import { Button } from "../components/ui/button";
+import { createCheckoutSession } from "../lib/checkout.functions";
 import logoAsset from "../assets/pickymaax-logo.png.asset.json";
 import productImage from "../assets/pickymaax-product.jpg";
 import maxImage from "../assets/max-story.jpg";
