@@ -86,7 +86,10 @@ function PickyMaaxPage() {
     <div className="min-h-screen overflow-x-hidden bg-background text-foreground">
       <header className={`fixed inset-x-0 top-0 z-40 transition-all duration-500 ${scrolled ? "border-b border-border bg-background/95 shadow-sm backdrop-blur" : "bg-transparent"}`}>
         <div className="mx-auto flex h-20 max-w-[1440px] items-center justify-between px-5 sm:px-8 lg:px-14">
-          <a href="#top" className="font-display text-xl tracking-[0.22em]" aria-label="PickyMaax home">PICKYMAAX</a>
+          <a href="#top" className="flex items-center gap-3" aria-label="PickyMaax home">
+            <img src={logoAsset.url} alt="" width={48} height={48} className="size-11 rounded-full object-contain" />
+            <span className="hidden font-display text-xl tracking-[0.22em] sm:inline">PICKYMAAX</span>
+          </a>
           <nav className="hidden items-center gap-9 md:flex" aria-label="Main navigation">
             <a className="nav-link" href="#about">About</a>
             <a className="nav-link" href="#how-it-works">How It Works</a>
