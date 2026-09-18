@@ -85,10 +85,10 @@ function PickyMaaxPage() {
   return (
     <div className="min-h-screen overflow-x-hidden bg-background text-foreground">
       <header className={`fixed inset-x-0 top-0 z-40 transition-all duration-500 ${scrolled ? "border-b border-border bg-background/95 shadow-sm backdrop-blur" : "bg-transparent"}`}>
-        <div className="mx-auto flex h-20 max-w-[1440px] items-center justify-between px-5 sm:px-8 lg:px-14">
+        <div className="mx-auto flex h-24 max-w-[1440px] items-center justify-between px-5 sm:px-8 lg:px-14">
           <a href="#top" className="flex items-center gap-3" aria-label="PickyMaax home">
-            <img src={logoAsset.url} alt="" width={48} height={48} className="size-11 rounded-full object-contain" />
-            <span className="hidden font-display text-xl tracking-[0.22em] sm:inline">PICKYMAAX</span>
+            <img src={logoAsset.url} alt="" width={96} height={96} className="size-16 rounded-full object-contain sm:size-[4.5rem]" />
+            <span className="hidden font-display text-2xl tracking-[0.22em] sm:inline">PICKYMAAX</span>
           </a>
           <nav className="hidden items-center gap-9 md:flex" aria-label="Main navigation">
             <a className="nav-link" href="#about">About</a>
@@ -149,7 +149,7 @@ function PickyMaaxPage() {
                   <span aria-live="polite" className="text-sm font-semibold">{quantity}</span>
                   <Button variant="icon" className="size-9 min-h-9" aria-label="Increase quantity" onClick={() => setQuantity((q) => q + 1)}><Plus size={15} /></Button>
                 </div>
-                <Button onClick={addToCart} className="h-13 flex-1">Add to cart · ${(24 * quantity).toFixed(0)}</Button>
+                <Button variant="gold" onClick={addToCart} className="h-13 min-h-13 w-full flex-1 px-8 text-sm shadow-soft">Add to cart · ${(24 * quantity).toFixed(0)}</Button>
               </div>
               <ul className="mt-8 grid gap-4 sm:grid-cols-3">
                 {["Enticing aroma", "Easy to serve", "Max approved"].map((benefit) => <li key={benefit} className="flex items-center gap-2 text-sm"><span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary"><Check size={14} strokeWidth={2.5} /></span>{benefit}</li>)}
