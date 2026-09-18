@@ -25,7 +25,7 @@ const productDetails = [
   { title: "Shipping", content: "Shipping details and delivery estimates will be confirmed at launch." },
 ];
 
-const faqs = [
+const faqs: Array<[string, string]> = [
   ["What’s in PickyMaax?", "PickyMaax uses a focused blend of savory ingredients. The complete ingredient panel will be published before orders open."],
   ["How much should I use?", "Start with a light sprinkle over your dog’s usual serving, then toss to coat the kibble evenly."],
   ["What if my dog doesn’t like it?", "Every dog is different. Our final satisfaction policy will be clearly posted before checkout goes live."],
