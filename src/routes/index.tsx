@@ -64,6 +64,23 @@ function PickyMaaxPage() {
   const [cartQuantity, setCartQuantity] = useState(0);
   const [openDetail, setOpenDetail] = useState<number | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [checkingOut, setCheckingOut] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
+  const startCheckout = useServerFn(createCheckoutSession);
+
+  const handleCheckout = async () => {
+    setCheckoutError(null);
+    setCheckingOut(true);
+    try {
+      const { url } = await startCheckout({ data: { quantity: cartQuantity } });
+      window.location.href = url;
+    } catch (error) {
+      console.error(error);
+      setCheckoutError("We couldn't start checkout. Please try again in a moment.");
+      setCheckingOut(false);
+    }
+  };
+
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 32);
