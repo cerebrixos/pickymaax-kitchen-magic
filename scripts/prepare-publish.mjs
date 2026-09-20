@@ -14,29 +14,12 @@ if (!jsBundle || !cssBundle) {
 }
 
 // In SPA mode, nitro prerenders the app shell as _shell.html. The client
-// bundle uses hydrateRoot(document, ...), so it needs matching HTML to
-// hydrate against. But the prerendered shell contains TanStack router
-// scripts ($tsr-stream-barrier, scroll restoration, inline bootstrap)
-// that assume SSR streaming and cause a render loop in SPA mode.
-//
-// Strategy: keep the prerendered HTML structure (head + body), strip ALL
-// inline scripts, then add back only the JS bundle so the client can
-// hydrate cleanly.
+// bundle uses hydrateRoot(document, ...) and needs the full prerendered
+// HTML — including the TSR router scripts — to hydrate correctly. We use
+// the shell as-is.
 let shellHtml = await readFile("dist/_shell.html", "utf8").catch(() => "");
 
 if (shellHtml) {
-  // Remove all <script> tags (inline router state, scroll restoration, etc.)
-  shellHtml = shellHtml.replace(/<script[\s\S]*?<\/script>/g, "");
-
-  // Remove modulepreload links — the JS bundle loads its own deps.
-  shellHtml = shellHtml.replace(/<link rel="modulepreload"[^>]*>/g, "");
-
-  // Inject the JS bundle script right before </body>.
-  shellHtml = shellHtml.replace(
-    /<\/body>/,
-    `<script type="module" src="/assets/${jsBundle}"></script></body>`,
-  );
-
   await writeFile("dist/index.html", shellHtml);
   await rm("dist/_shell.html").catch(() => {});
 } else {
