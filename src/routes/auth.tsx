@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
-import logoAsset from "@/assets/pickymaax-logo.png.asset.json";
+
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -75,7 +75,7 @@ function AuthPage() {
 
   return (
     <main className="mx-auto flex min-h-screen max-w-md flex-col items-center justify-center px-6 text-center">
-      <img src={logoAsset.url} alt="" width={96} height={96} className="size-20 rounded-full object-contain" />
+      <img src="/pickymaax-logo.webp" alt="" width={96} height={96} className="size-20 rounded-full object-contain" />
       <h1 className="mt-8 font-display text-4xl">Your orders</h1>
       <p className="mt-3 text-sm text-muted-foreground">
         Sign in with Google to see your PickyMaax orders and track their status.

@@ -18,7 +18,7 @@ import {
 import { useServerFn } from "@tanstack/react-start";
 import { Button } from "../components/ui/button";
 import { createCheckoutSession } from "../lib/checkout.functions";
-import logoAsset from "../assets/pickymaax-logo.png.asset.json";
+
 import productImage from "../assets/pickymaax-product.webp";
 import maxImage from "../assets/max-story.webp";
 
@@ -107,7 +107,7 @@ function PickyMaaxPage() {
       <header className={`fixed inset-x-0 top-0 z-40 transition-all duration-500 ${scrolled ? "border-b border-border bg-background/95 shadow-sm backdrop-blur" : "bg-transparent"}`}>
         <div className="mx-auto flex h-24 max-w-[1440px] items-center justify-between px-5 sm:px-8 lg:px-14">
           <a href="#top" className="flex items-center gap-3" aria-label="PickyMaax home">
-            <img src={logoAsset.url} alt="" width={96} height={96} className="size-16 rounded-full object-contain sm:size-[4.5rem]" />
+            <img src="/pickymaax-logo.webp" alt="" width={96} height={96} className="size-16 rounded-full object-contain sm:size-[4.5rem]" />
             <span className="hidden font-display text-2xl tracking-[0.22em] sm:inline">PICKYMAAX</span>
           </a>
           <nav className="hidden items-center gap-9 md:flex" aria-label="Main navigation">
@@ -237,7 +237,7 @@ function PickyMaaxPage() {
       </main>
 
       <footer className="bg-foreground px-5 py-14 text-background sm:px-8 lg:px-14">
-        <div className="mx-auto max-w-[1320px]"><div className="flex flex-col justify-between gap-10 border-b border-background/15 pb-12 md:flex-row md:items-start"><div className="flex items-center gap-4"><img src={logoAsset.url} alt="PickyMaax dog logo" width={72} height={72} className="size-16 rounded-full object-contain" /><span className="font-display text-2xl tracking-[0.2em]">PICKYMAAX</span></div><div className="grid grid-cols-2 gap-x-16 gap-y-4 text-sm"><a href="#about">About</a><a href="#shop">Pre-order</a><a href="#how-it-works">How it works</a><a href="#faq">FAQ</a><a href="mailto:hello@pickymaax.com">hello@pickymaax.com</a><Link to="/terms" className="text-background/70 hover:text-primary">Terms of Service</Link><Link to="/privacy" className="text-background/70 hover:text-primary">Privacy Policy</Link><div className="flex gap-3"><a href="#instagram" aria-label="Instagram"><Instagram size={18} /></a><a href="#tiktok" aria-label="TikTok" className="text-xs font-bold">TK</a></div></div></div><p className="pt-8 text-xs leading-relaxed text-background/55">PickyMaax · Made with love (and a lot of failed batches) by a 15-year-old and Max.</p></div>
+        <div className="mx-auto max-w-[1320px]"><div className="flex flex-col justify-between gap-10 border-b border-background/15 pb-12 md:flex-row md:items-start"><div className="flex items-center gap-4"><img src="/pickymaax-logo.webp" alt="PickyMaax dog logo" width={72} height={72} className="size-16 rounded-full object-contain" /><span className="font-display text-2xl tracking-[0.2em]">PICKYMAAX</span></div><div className="grid grid-cols-2 gap-x-16 gap-y-4 text-sm"><a href="#about">About</a><a href="#shop">Pre-order</a><a href="#how-it-works">How it works</a><a href="#faq">FAQ</a><a href="mailto:hello@pickymaax.com">hello@pickymaax.com</a><Link to="/terms" className="text-background/70 hover:text-primary">Terms of Service</Link><Link to="/privacy" className="text-background/70 hover:text-primary">Privacy Policy</Link><div className="flex gap-3"><a href="#instagram" aria-label="Instagram"><Instagram size={18} /></a><a href="#tiktok" aria-label="TikTok" className="text-xs font-bold">TK</a></div></div></div><p className="pt-8 text-xs leading-relaxed text-background/55">PickyMaax · Made with love (and a lot of failed batches) by a 15-year-old and Max.</p></div>
       </footer>
 
       {menuOpen && <div className="fixed inset-0 z-50 bg-foreground text-background md:hidden"><div className="flex h-20 items-center justify-between px-5"><span className="font-display tracking-[0.2em]">PICKYMAAX</span><Button variant="icon" className="text-background hover:bg-background/10" aria-label="Close menu" onClick={() => setMenuOpen(false)}><X /></Button></div><nav className="flex flex-col gap-8 px-8 pt-16 font-display text-4xl"><a href="#about" onClick={() => setMenuOpen(false)}>About</a><a href="#how-it-works" onClick={() => setMenuOpen(false)}>How It Works</a><a href="#faq" onClick={() => setMenuOpen(false)}>FAQ</a><a href="#shop" className="text-primary" onClick={() => setMenuOpen(false)}>Pre-order</a></nav></div>}

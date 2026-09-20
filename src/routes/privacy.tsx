@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import logoAsset from "@/assets/pickymaax-logo.png.asset.json";
+
 
 export const Route = createFileRoute("/privacy")({
   head: () => ({
@@ -76,7 +76,7 @@ function PrivacyPage() {
         <div className="mx-auto flex h-24 max-w-[1100px] items-center justify-between px-5 sm:px-8">
           <Link to="/" className="flex items-center gap-3" aria-label="PickyMaax home">
             <img
-              src={logoAsset.url}
+              src="/pickymaax-logo.webp"
               alt=""
               width={64}
               height={64}
