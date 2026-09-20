@@ -41,16 +41,40 @@ function OrdersPage() {
   const fetchOrders = useServerFn(getMyOrders);
 
   useEffect(() => {
+    let done = false;
+    // Give the client a moment to finish restoring the session (e.g. right
+    // after the Google redirect) before deciding the visitor is signed out.
+    const timer = setTimeout(() => {
+      if (done) return;
+      supabase.auth.getSession().then(({ data }) => {
+        if (done) return;
+        done = true;
+        setAuthed(Boolean(data.session));
+        setEmail(data.session?.user.email ?? null);
+        if (!data.session) navigate({ to: "/auth" });
+      });
+    }, 2000);
     const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (done && !session) return;
+      if (session) {
+        done = true;
+        clearTimeout(timer);
+      }
       setAuthed(Boolean(session));
       setEmail(session?.user.email ?? null);
     });
-    supabase.auth.getUser().then(({ data }) => {
-      setAuthed(Boolean(data.user));
-      setEmail(data.user?.email ?? null);
-      if (!data.user) navigate({ to: "/auth" });
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session && !done) {
+        done = true;
+        clearTimeout(timer);
+        setAuthed(true);
+        setEmail(data.session.user.email ?? null);
+      }
     });
-    return () => sub.subscription.unsubscribe();
+    return () => {
+      clearTimeout(timer);
+      sub.subscription.unsubscribe();
+    };
   }, [navigate]);
 
   const { data: orders, isLoading } = useQuery({
