@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable/index";
 import logoAsset from "@/assets/pickymaax-logo.png.asset.json";
 
 export const Route = createFileRoute("/auth")({
@@ -40,14 +41,16 @@ function AuthPage() {
   const signInWithGoogle = async () => {
     setError(null);
     setBusy(true);
-    const { error: authError } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: `${window.location.origin}/orders` },
+    const result = await lovable.auth.signInWithOAuth("google", {
+      redirect_uri: window.location.origin,
     });
-    if (authError) {
+    if (result.error) {
       setError("We couldn't start Google sign-in. Please try again.");
       setBusy(false);
+      return;
     }
+    if (result.redirected) return;
+    navigate({ to: "/orders" });
   };
 
   return (
