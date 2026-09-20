@@ -1,30 +1,27 @@
-import { cp, mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
+import { cp, mkdir, readdir, rm, writeFile } from "node:fs/promises";
 
 await rm("dist", { recursive: true, force: true });
 await mkdir("dist", { recursive: true });
 await cp(".output/public", "dist", { recursive: true });
 
-// In SPA mode, nitro emits the prerendered app shell as _shell.html.
-// Use it as the root index.html so the page has real content on first paint.
-let shellHtml = await readFile("dist/_shell.html", "utf8").catch(() => "");
+// Remove the prerendered shell — it contains embedded SSR router state and
+// stream-barrier scripts that cause a render loop in SPA mode. We write a
+// clean shell instead so the client does a fresh render with no hydration
+// mismatch.
+await rm("dist/_shell.html", { force: true }).catch(() => {});
 
-if (shellHtml) {
-  await writeFile("dist/index.html", shellHtml);
-  await rm("dist/_shell.html").catch(() => {});
-} else {
-  // Fallback: construct a minimal shell from the bundled assets.
-  const assets = await readdir("dist/assets");
-  const jsBundle = assets.find((f) => /^index-[A-Za-z0-9_-]+\.js$/.test(f));
-  const cssBundle = assets.find((f) => /^styles-[A-Za-z0-9_-]+\.css$/.test(f));
+const assets = await readdir("dist/assets");
+const jsBundle = assets.find((f) => /^index-[A-Za-z0-9_-]+\.js$/.test(f));
+const cssBundle = assets.find((f) => /^styles-[A-Za-z0-9_-]+\.css$/.test(f));
 
-  if (!jsBundle || !cssBundle) {
-    console.error("Could not find JS or CSS bundle in dist/assets");
-    process.exit(1);
-  }
+if (!jsBundle || !cssBundle) {
+  console.error("Could not find JS or CSS bundle in dist/assets");
+  process.exit(1);
+}
 
-  await writeFile(
-    "dist/index.html",
-    `<!doctype html>
+await writeFile(
+  "dist/index.html",
+  `<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
@@ -42,8 +39,7 @@ if (shellHtml) {
 <script type="module" src="/assets/${jsBundle}"></script>
 </body>
 </html>`,
-  );
-}
+);
 
 // SPA fallback: every path that isn't a static file should serve the shell.
 await writeFile(
