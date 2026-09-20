@@ -114,11 +114,14 @@ function TermsPage() {
           ))}
         </div>
 
-        <div className="mt-16 border-t border-border pt-8">
+        <div className="mt-16 border-t border-border pt-8 flex flex-wrap gap-x-6 gap-y-2">
           <p className="text-sm text-muted-foreground">
             PickyMaax · Made with love (and a lot of failed batches) by a
             15-year-old and Max.
           </p>
+          <Link to="/privacy" className="text-sm text-muted-foreground underline-offset-4 hover:text-primary hover:underline">
+            Privacy Policy
+          </Link>
         </div>
       </article>
     </main>
