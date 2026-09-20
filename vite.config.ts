@@ -6,10 +6,4 @@
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
-export default defineConfig({
-  tanstackStart: {
-    // SPA mode: serve the app shell and render entirely in the browser,
-    // so the site works on static hosting without a running server.
-    spa: { enabled: true },
-  },
-});
+export default defineConfig({});
