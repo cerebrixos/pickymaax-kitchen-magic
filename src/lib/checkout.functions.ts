@@ -65,7 +65,8 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
       phone_number_collection: { enabled: false },
       success_url: `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/checkout/cancelled`,
-      metadata: { quantity: String(data.quantity) },
+      ...(userEmail ? { customer_email: userEmail } : {}),
+      metadata: { quantity: String(data.quantity), ...(userId ? { user_id: userId } : {}) },
     });
 
     // Record the pending order up front so we can reconcile even if the
@@ -77,6 +78,8 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
         amount_total: session.amount_total ?? PRODUCT.unitAmount * data.quantity,
         currency: PRODUCT.currency,
         status: "pending",
+        user_id: userId,
+        customer_email: userEmail,
       },
       { onConflict: "stripe_session_id" },
     );
