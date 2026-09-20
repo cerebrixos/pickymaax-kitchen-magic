@@ -26,7 +26,23 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
     const stripe = getStripe();
-    const origin = originFrom(getRequest());
+    const request = getRequest();
+    const origin = originFrom(request);
+
+    // Optional: if the shopper is signed in, attach the order to their account.
+    let userId: string | null = null;
+    let userEmail: string | null = null;
+    const authHeader = request.headers.get("authorization");
+    if (authHeader?.startsWith("Bearer ")) {
+      const token = authHeader.slice(7);
+      const { data: claimsData } = await supabaseAdmin.auth.getClaims(token);
+      const claims = claimsData?.claims as { sub?: string; email?: string } | undefined;
+      if (claims?.sub) {
+        userId = claims.sub;
+        userEmail = claims.email ?? null;
+      }
+    }
+
 
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
