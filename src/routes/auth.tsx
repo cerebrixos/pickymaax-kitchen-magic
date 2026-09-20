@@ -29,20 +29,40 @@ function AuthPage() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
+    let navigated = false;
+    const go = () => {
+      if (!navigated) {
+        navigated = true;
+        navigate({ to: "/orders" });
+      }
+    };
     const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session) navigate({ to: "/orders" });
+      if (session) go();
     });
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/orders" });
-    });
-    return () => sub.subscription.unsubscribe();
+    // The session can land a moment after this page loads (right after the
+    // Google redirect), so poll briefly instead of checking only once.
+    let tries = 0;
+    const poll = setInterval(() => {
+      tries += 1;
+      supabase.auth.getSession().then(({ data }) => {
+        if (data.session) {
+          clearInterval(poll);
+          go();
+        }
+      });
+      if (tries >= 10) clearInterval(poll);
+    }, 500);
+    return () => {
+      clearInterval(poll);
+      sub.subscription.unsubscribe();
+    };
   }, [navigate]);
 
   const signInWithGoogle = async () => {
     setError(null);
     setBusy(true);
     const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
+      redirect_uri: `${window.location.origin}/auth`,
     });
     if (result.error) {
       setError("We couldn't start Google sign-in. Please try again.");
