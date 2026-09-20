@@ -17,7 +17,7 @@ export function getStripe(): Stripe {
 
 export const PRODUCT = {
   name: "PickyMaax",
-  description: "Life enhancing kibble topper for picky dogs",
+  description: "Life enhancing kibble topper for picky dogs (pre-order, ships at launch)",
   unitAmount: 2400, // $24.00 in cents
   currency: "usd",
 } as const;
