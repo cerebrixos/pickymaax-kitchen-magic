@@ -1,14 +1,8 @@
-import { cp, mkdir, readdir, rm, writeFile } from "node:fs/promises";
+import { cp, mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
 
 await rm("dist", { recursive: true, force: true });
 await mkdir("dist", { recursive: true });
 await cp(".output/public", "dist", { recursive: true });
-
-// Remove the prerendered shell — it contains embedded SSR router state and
-// stream-barrier scripts that cause a render loop in SPA mode. We write a
-// clean shell instead so the client does a fresh render with no hydration
-// mismatch.
-await rm("dist/_shell.html", { force: true }).catch(() => {});
 
 const assets = await readdir("dist/assets");
 const jsBundle = assets.find((f) => /^index-[A-Za-z0-9_-]+\.js$/.test(f));
@@ -19,9 +13,36 @@ if (!jsBundle || !cssBundle) {
   process.exit(1);
 }
 
-await writeFile(
-  "dist/index.html",
-  `<!doctype html>
+// In SPA mode, nitro prerenders the app shell as _shell.html. The client
+// bundle uses hydrateRoot(document, ...), so it needs matching HTML to
+// hydrate against. But the prerendered shell contains TanStack router
+// scripts ($tsr-stream-barrier, scroll restoration, inline bootstrap)
+// that assume SSR streaming and cause a render loop in SPA mode.
+//
+// Strategy: keep the prerendered HTML structure (head + body), strip ALL
+// inline scripts, then add back only the JS bundle so the client can
+// hydrate cleanly.
+let shellHtml = await readFile("dist/_shell.html", "utf8").catch(() => "");
+
+if (shellHtml) {
+  // Remove all <script> tags (inline router state, scroll restoration, etc.)
+  shellHtml = shellHtml.replace(/<script[\s\S]*?<\/script>/g, "");
+
+  // Remove modulepreload links — the JS bundle loads its own deps.
+  shellHtml = shellHtml.replace(/<link rel="modulepreload"[^>]*>/g, "");
+
+  // Inject the JS bundle script right before </body>.
+  shellHtml = shellHtml.replace(
+    /<\/body>/,
+    `<script type="module" src="/assets/${jsBundle}"></script></body>`,
+  );
+
+  await writeFile("dist/index.html", shellHtml);
+  await rm("dist/_shell.html").catch(() => {});
+} else {
+  await writeFile(
+    "dist/index.html",
+    `<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
@@ -39,7 +60,8 @@ await writeFile(
 <script type="module" src="/assets/${jsBundle}"></script>
 </body>
 </html>`,
-);
+  );
+}
 
 // SPA fallback: every path that isn't a static file should serve the shell.
 await writeFile(
