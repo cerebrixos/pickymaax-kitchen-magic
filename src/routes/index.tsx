@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import {
   ArrowDown,
@@ -115,6 +115,7 @@ function PickyMaaxPage() {
             <a className="nav-link" href="#faq">FAQ</a>
           </nav>
           <div className="flex items-center gap-1.5">
+            <Link to="/orders" className="nav-link hidden sm:inline" aria-label="My orders">My orders</Link>
             <Button variant="icon" aria-label={`Open cart, ${cartQuantity} items`} onClick={() => setCartOpen(true)} className="relative">
               <ShoppingBag size={19} strokeWidth={1.7} />
               {cartQuantity > 0 && <span className="absolute right-0 top-0 flex size-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">{cartQuantity}</span>}

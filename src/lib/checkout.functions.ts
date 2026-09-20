@@ -26,7 +26,23 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
     const stripe = getStripe();
-    const origin = originFrom(getRequest());
+    const request = getRequest();
+    const origin = originFrom(request);
+
+    // Optional: if the shopper is signed in, attach the order to their account.
+    let userId: string | null = null;
+    let userEmail: string | null = null;
+    const authHeader = request.headers.get("authorization");
+    if (authHeader?.startsWith("Bearer ")) {
+      const token = authHeader.slice(7);
+      const { data: claimsData } = await supabaseAdmin.auth.getClaims(token);
+      const claims = claimsData?.claims as { sub?: string; email?: string } | undefined;
+      if (claims?.sub) {
+        userId = claims.sub;
+        userEmail = claims.email ?? null;
+      }
+    }
+
 
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
@@ -49,7 +65,8 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
       phone_number_collection: { enabled: false },
       success_url: `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/checkout/cancelled`,
-      metadata: { quantity: String(data.quantity) },
+      ...(userEmail ? { customer_email: userEmail } : {}),
+      metadata: { quantity: String(data.quantity), ...(userId ? { user_id: userId } : {}) },
     });
 
     // Record the pending order up front so we can reconcile even if the
@@ -61,6 +78,8 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
         amount_total: session.amount_total ?? PRODUCT.unitAmount * data.quantity,
         currency: PRODUCT.currency,
         status: "pending",
+        user_id: userId,
+        customer_email: userEmail,
       },
       { onConflict: "stripe_session_id" },
     );
