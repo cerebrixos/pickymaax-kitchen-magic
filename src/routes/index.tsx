@@ -18,8 +18,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { Button } from "../components/ui/button";
 import { createCheckoutSession } from "../lib/checkout.functions";
 import logoAsset from "../assets/pickymaax-logo.png.asset.json";
-import productImage from "../assets/pickymaax-product.jpg";
-import maxImage from "../assets/max-story.jpg";
+import productImage from "../assets/pickymaax-product.webp";
+import maxImage from "../assets/max-story.webp";
 
 const productDetails = [
   { title: "Ingredients", content: "A simple, savory blend crafted to make everyday kibble more appealing. Final ingredient list coming soon." },
