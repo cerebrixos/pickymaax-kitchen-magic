@@ -4,18 +4,27 @@ await rm("dist", { recursive: true, force: true });
 await mkdir("dist", { recursive: true });
 await cp(".output/public", "dist", { recursive: true });
 
-const assets = await readdir("dist/assets");
-const jsBundle = assets.find((f) => /^index-[A-Za-z0-9_-]+\.js$/.test(f));
-const cssBundle = assets.find((f) => /^styles-[A-Za-z0-9_-]+\.css$/.test(f));
+// In SPA mode, nitro emits the prerendered app shell as _shell.html.
+// Use it as the root index.html so the page has real content on first paint.
+let shellHtml = await readFile("dist/_shell.html", "utf8").catch(() => "");
 
-if (!jsBundle || !cssBundle) {
-  console.error("Could not find JS or CSS bundle in dist/assets");
-  process.exit(1);
-}
+if (shellHtml) {
+  await writeFile("dist/index.html", shellHtml);
+  await rm("dist/_shell.html").catch(() => {});
+} else {
+  // Fallback: construct a minimal shell from the bundled assets.
+  const assets = await readdir("dist/assets");
+  const jsBundle = assets.find((f) => /^index-[A-Za-z0-9_-]+\.js$/.test(f));
+  const cssBundle = assets.find((f) => /^styles-[A-Za-z0-9_-]+\.css$/.test(f));
 
-await writeFile(
-  "dist/index.html",
-  `<!doctype html>
+  if (!jsBundle || !cssBundle) {
+    console.error("Could not find JS or CSS bundle in dist/assets");
+    process.exit(1);
+  }
+
+  await writeFile(
+    "dist/index.html",
+    `<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
@@ -33,4 +42,12 @@ await writeFile(
 <script type="module" src="/assets/${jsBundle}"></script>
 </body>
 </html>`,
+  );
+}
+
+// SPA fallback: every path that isn't a static file should serve the shell.
+await writeFile(
+  "dist/_redirects",
+  `/*    /index.html   200
+`,
 );

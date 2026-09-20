@@ -15,9 +15,8 @@ import {
   UtensilsCrossed,
   X,
 } from "lucide-react";
-import { useServerFn } from "@tanstack/react-start";
 import { Button } from "../components/ui/button";
-import { createCheckoutSession } from "../lib/checkout.functions";
+import { createCheckoutSession } from "../lib/edge-functions";
 
 import productImage from "../assets/pickymaax-product.webp";
 import maxImage from "../assets/max-story.webp";
@@ -69,13 +68,12 @@ function PickyMaaxPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [checkingOut, setCheckingOut] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
-  const startCheckout = useServerFn(createCheckoutSession);
 
   const handleCheckout = async () => {
     setCheckoutError(null);
     setCheckingOut(true);
     try {
-      const { url } = await startCheckout({ data: { quantity: cartQuantity } });
+      const { url } = await createCheckoutSession(cartQuantity);
       window.location.href = url;
     } catch (error) {
       console.error(error);

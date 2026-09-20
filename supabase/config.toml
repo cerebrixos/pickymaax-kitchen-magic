@@ -1,1 +1,13 @@
 project_id = "ehdkadjbbvxqenhasjae"
+
+[functions.create-checkout]
+verify_jwt = true
+
+[functions.order-status]
+verify_jwt = false
+
+[functions.my-orders]
+verify_jwt = true
+
+[functions.stripe-webhook]
+verify_jwt = false

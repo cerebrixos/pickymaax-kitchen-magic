@@ -1,11 +1,10 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
 
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { getMyOrders } from "@/lib/orders.functions";
+import { getMyOrders } from "@/lib/edge-functions";
 
 export const Route = createFileRoute("/orders")({
   head: () => ({
@@ -38,7 +37,6 @@ function OrdersPage() {
   const navigate = useNavigate();
   const [authed, setAuthed] = useState<boolean | null>(null);
   const [email, setEmail] = useState<string | null>(null);
-  const fetchOrders = useServerFn(getMyOrders);
 
   useEffect(() => {
     let done = false;
@@ -79,7 +77,7 @@ function OrdersPage() {
 
   const { data: orders, isLoading } = useQuery({
     queryKey: ["my-orders"],
-    queryFn: () => fetchOrders(),
+    queryFn: () => getMyOrders(),
     enabled: authed === true,
     refetchInterval: 15000,
   });

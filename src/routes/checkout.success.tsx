@@ -1,14 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
-import { z } from "zod";
 import { Check } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { getOrderStatus } from "@/lib/checkout.functions";
+import { getOrderStatus } from "@/lib/edge-functions";
 
 export const Route = createFileRoute("/checkout/success")({
-  validateSearch: z.object({ session_id: z.string().optional() }),
+  validateSearch: (search: { session_id?: string }) => ({ session_id: search.session_id }),
   head: () => ({
     meta: [
       { title: "Order confirmed — PickyMaax" },
@@ -25,11 +23,10 @@ export const Route = createFileRoute("/checkout/success")({
 
 function SuccessPage() {
   const { session_id } = Route.useSearch();
-  const fetchStatus = useServerFn(getOrderStatus);
 
   const { data, isLoading } = useQuery({
     queryKey: ["order-status", session_id],
-    queryFn: () => fetchStatus({ data: { sessionId: session_id! } }),
+    queryFn: () => getOrderStatus(session_id!),
     enabled: Boolean(session_id),
     refetchInterval: (q) => (q.state.data?.status === "paid" ? false : 2000),
   });
